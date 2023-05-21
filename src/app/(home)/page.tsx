@@ -32,7 +32,7 @@ export default function Home() {
     setVideos([]);
     setIsLoading(true);
 
-    const res = await fetch(`http://localhost:3000/api/video?q=${link}`, {
+    const res = await fetch(`https://yt-mgr.vercel.app/api/video?q=${link}`, {
       cache: "no-cache",
     });
 
