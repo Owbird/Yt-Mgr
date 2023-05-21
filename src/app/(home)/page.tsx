@@ -70,10 +70,6 @@ export default function Home() {
               </Stack>
             </Center>
           </Stack>
-
-          {videos.map((video) => (
-            <Box margin={"10"}></Box>
-          ))}
         </Box>
       </Box>
       {videos.length > 0 && (
@@ -90,6 +86,7 @@ export default function Home() {
           <Tbody>
             {videos.map((video, index) => (
               <Tr
+                key={index}
                 _hover={{
                   bgColor: "gray.400",
                 }}
@@ -127,6 +124,7 @@ export default function Home() {
                       )
                       .map((format) => (
                         <Badge
+                          key={format.url}
                           _hover={{
                             bgColor: "red",
                           }}
@@ -150,6 +148,7 @@ export default function Home() {
                       )
                       .map((format) => (
                         <Badge
+                          key={format.url}
                           _hover={{
                             bgColor: "red",
                           }}
