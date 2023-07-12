@@ -26,6 +26,17 @@ export default function Home() {
     setVideos(data);
   };
 
+  const readClipboard = async () => {
+    const text = await navigator.clipboard.readText();
+    const regex =
+      /(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=)?([A-Za-z0-9_-]{11})/;
+    const matches = text.match(regex);
+
+    if (matches) {
+      setLink(matches[0]);
+    }
+  };
+
   return (
     <Fragment>
       <Hero />
@@ -34,7 +45,9 @@ export default function Home() {
           <Input
             type="text"
             name="q"
+            value={link}
             onChange={(event) => setLink(event.target.value)}
+            onClick={readClipboard}
             placeholder="YouTube Link"
             focusBorderColor="blue.500"
           />
