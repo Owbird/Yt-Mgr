@@ -1,7 +1,13 @@
 import { NextRequest } from "next/server";
 import { DOMParser } from "xmldom";
 
-export async function GET(req: NextRequest) {
+/**
+ * Generates a download link for a subtitle file based on the provided URL query parameter.
+ *
+ * @param {NextRequest} req - The request object containing the URL with query parameters.
+ * @return {Response} The response object containing the subtitle file as a download.
+ */
+export async function GET(req: NextRequest): Promise<Response> {
   const { searchParams } = new URL(req.url);
 
   const link = searchParams.get("q");
@@ -21,31 +27,32 @@ export async function GET(req: NextRequest) {
   return new Response(srt, { headers: responseHeaders });
 }
 
+/**
+ * Converts an XML string to an SRT string.
+ *
+ * @param {string} xml - The XML string to convert.
+ * @return {string} The converted SRT string.
+ */
 function convertXmlToSrt(xml: string): string {
-  let srt = "";
   const parser = new DOMParser();
   const xmlDoc = parser.parseFromString(xml, "text/xml");
   const textNodes = xmlDoc.getElementsByTagName("text");
 
-  for (let i = 0; i < textNodes.length; i++) {
-    const start = parseFloat(textNodes[i].getAttribute("start")!)
-      .toFixed(3)
-      .replace(".", ",");
-    const duration = parseFloat(textNodes[i].getAttribute("dur")!)
-      .toFixed(3)
-      .replace(".", ",");
-    const text = textNodes[i]
-      .textContent!.trim()
-      .replace(/<\/?[^>]+(>|$)/g, "");
+  return Array.from(textNodes)
+    .map((textNode, index) => {
+      const start = parseFloat(textNode.getAttribute("start")!)
+        .toFixed(3)
+        .replace(".", ",");
+      const duration = parseFloat(textNode.getAttribute("dur")!)
+        .toFixed(3)
+        .replace(".", ",");
+      const text = textNode.textContent!.trim().replace(/<\/?[^>]+(>|$)/g, "");
 
-    srt += i + 1 + "\n";
-    srt +=
-      start +
-      " --> " +
-      (parseFloat(start) + parseFloat(duration)).toFixed(3).replace(".", ",") +
-      "\n";
-    srt += text + "\n\n";
-  }
-
-  return srt;
+      return `${index + 1}
+${start} --> ${(parseFloat(start) + parseFloat(duration))
+        .toFixed(3)
+        .replace(".", ",")}
+${text}\n\n`;
+    })
+    .join("");
 }

@@ -24,6 +24,8 @@ import Image from "next/image";
 import { Fragment, useState } from "react";
 
 export default function Home() {
+  const HEADERS = ["#", "", "Title", "Video", "Audio Only", "Caption"];
+
   const [link, setLink] = useState<string>();
   const [videos, setVideos] = useState<Video[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -74,12 +76,9 @@ export default function Home() {
         <Table variant="simple">
           <Thead>
             <Tr>
-              <Th>#</Th>
-              <Th></Th>
-              <Th>Title</Th>
-              <Th>Video</Th>
-              <Th>Audio Only</Th>
-              <Th>Caption</Th>
+              {HEADERS.map((header) => (
+                <Th key={header}>{header}</Th>
+              ))}
             </Tr>
           </Thead>
           <Tbody>
@@ -92,14 +91,12 @@ export default function Home() {
               >
                 <Td>{index + 1}</Td>
                 <Td>
-                  {
-                    <Image
-                      src={video.videoDetails.thumbnails![0].url}
-                      width={video.videoDetails.thumbnails![0].width}
-                      height={video.videoDetails.thumbnails![0].height}
-                      alt={video.videoDetails.title}
-                    />
-                  }
+                  <Image
+                    src={video.videoDetails.thumbnails![0].url}
+                    width={video.videoDetails.thumbnails![0].width}
+                    height={video.videoDetails.thumbnails![0].height}
+                    alt={video.videoDetails.title}
+                  />
                 </Td>
                 <Td>
                   <VStack align={"self-start"}>
@@ -113,55 +110,10 @@ export default function Home() {
                   </VStack>
                 </Td>
                 <Td align="left">
-                  <HStack align={"flex-start"}>
-                    {video
-                      .formats!.filter(
-                        (video) => video.hasAudio && video.qualityLabel
-                      )
-                      .sort((a, b) =>
-                        a.qualityLabel!.localeCompare(b.qualityLabel!)
-                      )
-                      .map((format) => (
-                        <Badge
-                          key={format.url}
-                          _hover={{
-                            bgColor: "red",
-                          }}
-                          colorScheme="blue"
-                        >
-                          <Link
-                            href={format.url!}
-                            download={video.videoDetails.title}
-                          >
-                            {format.qualityLabel}
-                          </Link>
-                        </Badge>
-                      ))}
-                  </HStack>
+                  <VideoLabels video={video} />
                 </Td>
                 <Td align="left">
-                  <VStack align={"flex-start"}>
-                    {video
-                      .formats!.filter(
-                        (video) => video.hasAudio && !video.qualityLabel
-                      )
-                      .map((format) => (
-                        <Badge
-                          key={format.url}
-                          _hover={{
-                            bgColor: "red",
-                          }}
-                          colorScheme="green"
-                        >
-                          <Link
-                            href={format.url!}
-                            download={`${video.videoDetails.title}.mp4`}
-                          >
-                            {format.mimeType}
-                          </Link>
-                        </Badge>
-                      ))}
-                  </VStack>
+                  <AudioLabels video={video} />
                 </Td>
                 <Td>
                   <Badge colorScheme="red">
@@ -185,3 +137,51 @@ export default function Home() {
     </Fragment>
   );
 }
+
+const VideoLabels = ({ video }: { video: Video }) => {
+  return (
+    <HStack align={"flex-start"}>
+      {video
+        .formats!.filter((video) => video.hasAudio && video.qualityLabel)
+        .sort((a, b) => a.qualityLabel!.localeCompare(b.qualityLabel!))
+        .map((format) => (
+          <Badge
+            key={format.url}
+            _hover={{
+              bgColor: "red",
+            }}
+            colorScheme="blue"
+          >
+            <Link href={format.url!} download={video.videoDetails.title}>
+              {format.qualityLabel}
+            </Link>
+          </Badge>
+        ))}
+    </HStack>
+  );
+};
+
+const AudioLabels = ({ video }: { video: Video }) => {
+  return (
+    <VStack align={"flex-start"}>
+      {video
+        .formats!.filter((video) => video.hasAudio && !video.qualityLabel)
+        .map((format) => (
+          <Badge
+            key={format.url}
+            _hover={{
+              bgColor: "red",
+            }}
+            colorScheme="green"
+          >
+            <Link
+              href={format.url!}
+              download={`${video.videoDetails.title}.mp4`}
+            >
+              {format.mimeType}
+            </Link>
+          </Badge>
+        ))}
+    </VStack>
+  );
+};
