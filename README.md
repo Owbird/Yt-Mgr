@@ -2,7 +2,7 @@
 
 ![demo](assets/ss.png)
 
-A Simple Website to download YouTube videos in different formats with playlist support
+A Simple Website to download YouTube videos, audio, and captions with playlist support
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
