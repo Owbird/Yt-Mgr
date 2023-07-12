@@ -1,4 +1,4 @@
-import { Video } from "@/interface/interface";
+import { Video } from "@/interfaces/interfaces";
 import { NextRequest } from "next/server";
 import ytdl from "ytdl-core";
 import ytpl from "ytpl";

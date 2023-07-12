@@ -1,6 +1,6 @@
 "use client";
 
-import { Video } from "@/interface/interface";
+import { Video } from "@/interfaces/interfaces";
 import {
   Badge,
   Box,
@@ -32,9 +32,7 @@ export default function Home() {
     setVideos([]);
     setIsLoading(true);
 
-    const res = await fetch(`https://yt-mgr.vercel.app/api/video?q=${link}`, {
-      cache: "no-cache",
-    });
+    const res = await fetch(`/api/video?q=${link}`);
 
     const data = (await res.json()) as Video[];
 
@@ -81,6 +79,7 @@ export default function Home() {
               <Th>Title</Th>
               <Th>Video</Th>
               <Th>Audio Only</Th>
+              <Th>Caption</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -163,6 +162,20 @@ export default function Home() {
                         </Badge>
                       ))}
                   </VStack>
+                </Td>
+                <Td>
+                  <Badge colorScheme="red">
+                    <Link
+                      href={`/api/video/caption?q=${
+                        video.player_response.captions
+                          .playerCaptionsTracklistRenderer.captionTracks![0]
+                          .baseUrl
+                      }`}
+                      download={`${video.videoDetails.title}.srt`}
+                    >
+                      Caption
+                    </Link>
+                  </Badge>
                 </Td>
               </Tr>
             ))}

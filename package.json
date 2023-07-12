@@ -22,7 +22,11 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "typescript": "5.0.4",
+    "xmldom": "^0.6.0",
     "ytdl-core": "^4.11.4",
     "ytpl": "^2.3.0"
+  },
+  "devDependencies": {
+    "@types/xmldom": "^0.1.31"
   }
 }
