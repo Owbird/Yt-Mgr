@@ -14,6 +14,17 @@ export default function Home() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleSetLink = (link: string) => {
+    try {
+      if (!link.startsWith("http")) {
+        link = `https://${link}`;
+      }
+      new URL(link);
+
+      setLink(link);
+    } catch (error) {}
+  };
+
   const handleSearch = async () => {
     setVideos([]);
     setIsLoading(true);
@@ -33,7 +44,7 @@ export default function Home() {
     const matches = text.match(regex);
 
     if (matches) {
-      setLink(matches[0]);
+      handleSetLink(matches[0]);
     }
   };
 
@@ -46,7 +57,7 @@ export default function Home() {
             type="text"
             name="q"
             value={link}
-            onChange={(event) => setLink(event.target.value)}
+            onChange={(event) => handleSetLink(event.target.value)}
             onClick={readClipboard}
             placeholder="YouTube Link"
             focusBorderColor="blue.500"
