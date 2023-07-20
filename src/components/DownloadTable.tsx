@@ -1,4 +1,5 @@
 import { Video } from "@/interfaces/interfaces";
+import convertXmlToSrt from "@/utils/xml_to_srt";
 import {
   Badge,
   HStack,
@@ -21,6 +22,30 @@ const DownloadTable = ({
   headers: string[];
   videos: Video[];
 }) => {
+  const donwloadCaption = async (video: Video) => {
+    const link =
+      video.player_response.captions.playerCaptionsTracklistRenderer
+        .captionTracks![0].baseUrl;
+
+    const res = await fetch(link!, {
+      redirect: "follow",
+      cache: "no-cache",
+    });
+
+    const xml = await res.text();
+
+    const srt = convertXmlToSrt(xml);
+
+    const downloadTag = document.createElement("a");
+
+    downloadTag.href = `data:text/plain;charset=utf-8,${encodeURIComponent(
+      srt
+    )}`;
+    downloadTag.download = `${video.videoDetails.title}.srt`;
+    downloadTag.click();
+    downloadTag.remove();
+  };
+
   return (
     <Table variant="simple">
       <Thead>
@@ -63,16 +88,8 @@ const DownloadTable = ({
               <AudioLabels video={video} />
             </Td>
             <Td>
-              <Badge colorScheme="red">
-                <Link
-                  href={`/api/video/caption?q=${
-                    video.player_response.captions
-                      .playerCaptionsTracklistRenderer.captionTracks![0].baseUrl
-                  }`}
-                  download={`${video.videoDetails.title}.srt`}
-                >
-                  Caption
-                </Link>
+              <Badge onClick={() => donwloadCaption(video)} colorScheme="red">
+                Caption
               </Badge>
             </Td>
           </Tr>
